@@ -1,6 +1,7 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const Dashboard = () => {
     const { user, logout } = useAuth();
@@ -13,6 +14,9 @@ const Dashboard = () => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-blue-200 text-blue-600 p-4">
+            <Helmet>
+                <title>Task Manager | {user.displayName} Profile</title>
+            </Helmet>
             <h1 className="text-2xl md:text-3xl font-black mb-4">Welcome to User Profile</h1>
             {user && (
                 <div className="bg-blue-100 shadow-md rounded-lg p-6 text-center md:w-1/2 h-4/5">

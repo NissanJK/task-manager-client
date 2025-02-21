@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../firebase/firebase.config";
 import Loader from "../components/Loader";
+import Swal from "sweetalert2";
 
 // Create context
 const AuthContext = createContext();
@@ -12,29 +13,52 @@ export const AuthProvider = ({ children }) => {
 
     const googleProvider = new GoogleAuthProvider();
 
-    // Google Sign-in
+    // Google Sign-in with SweetAlert
     const loginWithGoogle = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
             const { uid, email, displayName } = result.user;
 
-            await fetch("http://localhost:5000/api/users", {
+            await fetch("https://task-manager-server-pi-weld.vercel.app/api/users", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ uid, email, displayName }),
             });
 
+            Swal.fire({
+                icon: "success",
+                title: "Login Successful!",
+                text: `Welcome, ${displayName}!`,
+                timer: 2000,
+                showConfirmButton: false,
+            });
+
         } catch (error) {
-            console.error("Google Sign-in Error: ", error.message);
+            Swal.fire({
+                icon: "error",
+                title: "Login Failed",
+                text: error.message,
+            });
         }
     };
 
-    // Logout
+    // Logout with SweetAlert
     const logout = async () => {
         try {
             await signOut(auth);
+            Swal.fire({
+                icon: "success",
+                title: "Logged Out",
+                text: "You have successfully logged out.",
+                timer: 2000,
+                showConfirmButton: false,
+            });
         } catch (error) {
-            console.error("Logout Error: ", error.message);
+            Swal.fire({
+                icon: "error",
+                title: "Logout Failed",
+                text: error.message,
+            });
         }
     };
 
